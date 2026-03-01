@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { Phone, Mail, MapPin, Clock, Sun, CheckCircle, AlertCircle, Loader } from "lucide-react";
+import { Phone, Mail, MapPin, Clock, Sun, CheckCircle, AlertCircle, Loader, MessageCircle } from "lucide-react";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
