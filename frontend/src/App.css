@@ -1,34 +1,99 @@
-.App-logo {
-    height: 40vmin;
-    pointer-events: none;
+/* Solar Flow Animation CSS */
+@keyframes sunPulseAnim {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 0.85; transform: scale(1.12); }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-    .App-logo {
-        animation: App-logo-spin infinite 20s linear;
-    }
+@keyframes sunRotateAnim {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
-.App-header {
-    background-color: #0f0f10;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
+@keyframes flowDashAnim {
+  to { stroke-dashoffset: -36; }
 }
 
-.App-link {
-    color: #61dafb;
+@keyframes fadeUpAnim {
+  from { opacity: 0; transform: translateY(28px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes App-logo-spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
+@keyframes floatAnim {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes glowPulse {
+  0%, 100% { filter: drop-shadow(0 0 6px rgba(250,204,21,0.5)); }
+  50% { filter: drop-shadow(0 0 18px rgba(250,204,21,0.9)); }
+}
+
+@keyframes houseGlow {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.8; }
+}
+
+/* SVG animation classes */
+.svg-sun-pulse {
+  animation: sunPulseAnim 2.5s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.svg-sun-pulse-delay {
+  animation: sunPulseAnim 2.5s ease-in-out infinite 0.9s;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.svg-sun-rays {
+  animation: sunRotateAnim 28s linear infinite;
+}
+
+.svg-flow-1 {
+  animation: flowDashAnim 1.6s linear infinite;
+}
+.svg-flow-2 {
+  animation: flowDashAnim 1.9s linear infinite 0.35s;
+}
+.svg-flow-3 {
+  animation: flowDashAnim 2.2s linear infinite 0.6s;
+}
+.svg-flow-4 {
+  animation: flowDashAnim 2.5s linear infinite 0.9s;
+}
+
+.svg-glow-pulse {
+  animation: glowPulse 2s ease-in-out infinite;
+}
+
+.svg-house-glow {
+  animation: houseGlow 2s ease-in-out infinite 1s;
+}
+
+/* Page animations */
+.fade-up {
+  animation: fadeUpAnim 0.7s ease-out forwards;
+}
+
+.fade-up-1 { animation: fadeUpAnim 0.7s ease-out 0.1s both; }
+.fade-up-2 { animation: fadeUpAnim 0.7s ease-out 0.2s both; }
+.fade-up-3 { animation: fadeUpAnim 0.7s ease-out 0.3s both; }
+.fade-up-4 { animation: fadeUpAnim 0.7s ease-out 0.4s both; }
+
+.float-anim {
+  animation: floatAnim 3.5s ease-in-out infinite;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #0f172a; }
+::-webkit-scrollbar-thumb { background: #F59E0B; border-radius: 4px; }
+
+/* Smooth transitions for nav */
+.nav-scroll-solid {
+  background-color: rgba(15, 23, 42, 0.98);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(245,158,11,0.15);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.3);
 }
