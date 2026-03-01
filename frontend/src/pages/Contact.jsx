@@ -41,9 +41,29 @@ export default function Contact() {
   const [form, setForm] = useState(initialForm);
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState(null); // 'success' | 'error' | null
+  const [submittedData, setSubmittedData] = useState(null);
 
   const handleChange = (e) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  // Generate WhatsApp message with lead details
+  const generateWhatsAppLink = (data) => {
+    const message = `🌞 *New Solar Inquiry from HelioHarvest Website*
+
+👤 *Name:* ${data.name}
+📧 *Email:* ${data.email}
+📱 *Phone:* ${data.phone}
+📍 *Address:* ${data.address || "Not provided"}
+
+💬 *Message:*
+${data.message || "No additional message"}
+
+---
+Sent via HelioHarvest Lead Form`;
+    
+    const encodedMessage = encodeURIComponent(message);
+    return `https://wa.me/919092379023?text=${encodedMessage}`;
   };
 
   const handleSubmit = async (e) => {
@@ -52,12 +72,20 @@ export default function Contact() {
     setStatus(null);
     try {
       await axios.post(`${API}/leads`, form);
+      setSubmittedData({ ...form }); // Store submitted data for WhatsApp link
       setStatus("success");
       setForm(initialForm);
     } catch {
       setStatus("error");
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Handle WhatsApp button click
+  const handleWhatsAppClick = () => {
+    if (submittedData) {
+      window.open(generateWhatsAppLink(submittedData), "_blank");
     }
   };
 
