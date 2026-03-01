@@ -21,15 +21,20 @@ Build a SaaS marketing website for HelioHarvest, a solar installation company. T
 ## What's Been Implemented (as of Feb/Mar 2026)
 
 ### Pages
-- **Home** — Hero with realistic SVG solar energy flow animation, stats bar, Mission & Vision (with all 3 product names), Services preview, HelioHarvest Product Ecosystem (3 platform cards), Why HelioHarvest features, Testimonials, India Coverage section (30 state/city badges + pan-India stats), CTA banner
+- **Home** — Hero with Tata Power solar panel image, stats bar, Mission & Vision (with all 3 product names), Services preview, HelioHarvest Product Ecosystem (3 platform cards), Why HelioHarvest features, Testimonials, India Coverage section (30 state/city badges + pan-India stats), CTA banner
 - **About** — Company story, milestones timeline, detailed Mission & Vision, Core Values
 - **Services** — 3 service cards (Installation, Monitoring, AMC), How It Works 4-step process, Benefits stats, Monitoring feature section
-- **Contact** — Lead form (name/email/phone/address/message), Contact info, What Happens Next guide
+- **Contact** — Lead form with WhatsApp integration, Contact info with office address, What Happens Next guide
 
 ### Components
 - **Navbar** — Transparent-to-solid scroll effect, mobile hamburger menu, phone number, CTA button
-- **Footer** — Dark navy, links, contact info, social icons
-- **SolarFlowDiagram** — Updated (Dec 2025): Replaced animated SVG with realistic Tata Power solar panel image background. Shows large-scale solar installation with rows of panels. Retains header bar with color legend (DC Power, AC Power, Battery, Grid) and HelioHarvest branding at bottom.
+- **Footer** — Dark navy, links, contact info with Coimbatore address, social icons
+- **SolarFlowDiagram** — Updated (Dec 2025): Tata Power solar panel image background with header legend
+
+### WhatsApp Lead Notification (Dec 2025)
+- After form submission, "Send to WhatsApp" button appears
+- Pre-fills WhatsApp message with lead details (name, email, phone, address, message)
+- Opens wa.me link to send directly to +91 9092379023
 
 ### Backend
 - FastAPI with `/api/leads` POST and GET endpoints
