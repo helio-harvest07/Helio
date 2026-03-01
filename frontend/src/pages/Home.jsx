@@ -373,6 +373,57 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── INDIA COVERAGE ── */}
+      <section className="bg-[#0F172A] py-16 md:py-24 relative overflow-hidden">
+        {/* Decorative India map silhouette background */}
+        <div className="absolute inset-0 pointer-events-none opacity-5">
+          <div className="absolute right-0 top-0 w-1/2 h-full bg-gradient-to-l from-[#F59E0B] to-transparent" />
+        </div>
+        <div className="relative max-w-7xl mx-auto px-6 md:px-12">
+          <div className="text-center mb-10">
+            <p className="text-[#F59E0B] text-sm font-semibold uppercase tracking-widest mb-3">Pan-India Presence</p>
+            <h2 className="text-4xl md:text-5xl font-bold text-white" style={{ fontFamily: "Outfit, sans-serif" }} data-testid="india-section-heading">
+              Solar Solutions Across<br />
+              <span className="text-[#FACC15]">Every Corner of India</span>
+            </h2>
+            <p className="text-slate-400 text-lg mt-4 max-w-2xl mx-auto">
+              From Kashmir to Kanyakumari — we bring MNRE-certified professional solar installation to homes and businesses across India.
+            </p>
+          </div>
+
+          {/* Stats */}
+          <div className="grid grid-cols-3 gap-6 mb-10 max-w-2xl mx-auto">
+            {[
+              { v: "28+", l: "States & UTs" },
+              { v: "100+", l: "Cities Covered" },
+              { v: "500+", l: "Installations" },
+            ].map((s) => (
+              <div key={s.l} className="text-center p-5 rounded-2xl bg-[#1E3A8A]/30 border border-[#1E3A8A]/50">
+                <p className="text-3xl font-bold text-[#FACC15]" style={{ fontFamily: "Outfit, sans-serif" }}>{s.v}</p>
+                <p className="text-slate-400 text-sm mt-1">{s.l}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* State badges */}
+          <div className="flex flex-wrap gap-2 justify-center max-w-5xl mx-auto" data-testid="state-badges">
+            {indianStates.map((state) => (
+              <span
+                key={state}
+                className="px-3 py-1.5 rounded-full bg-[#1E3A8A]/20 border border-[#1E3A8A]/40 text-slate-300 text-xs hover:border-[#F59E0B]/50 hover:text-[#FACC15] transition-colors"
+              >
+                {state}
+              </span>
+            ))}
+          </div>
+
+          {/* India note */}
+          <p className="text-center text-slate-500 text-sm mt-8">
+            Don't see your city? <Link to="/contact" className="text-[#F59E0B] hover:underline">Contact us</Link> — we're expanding rapidly and cover most of India.
+          </p>
+        </div>
+      </section>
+
       {/* ── CTA BANNER ── */}
       <section className="bg-[#1E3A8A] py-16">
         <div className="max-w-4xl mx-auto px-6 md:px-12 text-center">
