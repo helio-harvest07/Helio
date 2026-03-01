@@ -272,8 +272,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── WHY HELIOHARVEST ── */}
-      <section className="bg-[#F8FAFC] py-20 md:py-28">
+      {/* ── WHY HELIOHARVEST ── */}      <section className="bg-[#F8FAFC] py-20 md:py-28">
         <div className="max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <div>
             <p className="text-[#F59E0B] text-sm font-semibold uppercase tracking-widest mb-3">Why Us</p>
