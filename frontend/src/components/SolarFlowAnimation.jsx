@@ -1,325 +1,356 @@
 import React from "react";
 
-/* ── Coordinate System ──────────────────────────────────────────────────────
-   ViewBox: 0 0 720 440
-   Flow: SUN (left) → 3 SOLAR PANELS (top-center) → INVERTER → BATTERY / HOME
-   DC path = orange  |  AC path = green  |  Photons = yellow
+/* ───────────────────────────────────────────────────────────────────────────
+   Realistic Solar Flow Diagram — Static infographic style
+   Layout:  ☀ → [PANELS] ──DC→ [INVERTER] ──AC→ [HOME LOADS]
+                                    ↕↕                  ↕
+                              [BATT][GRID]           [GRID]
+   Colors: Solar=#FACC15  DC=#F59E0B  AC=#22C55E  Batt=#3B82F6  Grid=#A78BFA
    ─────────────────────────────────────────────────────────────────────────── */
 
-const PATHS = {
-  // Photon beams: from sun right edge toward each panel top
-  photon1: "M 118 62 L 155 50",
-  photon2: "M 118 68 C 180 58 235 52 275 50",
-  photon3: "M 118 74 C 220 60 340 50 395 50",
-  photon4: "M 118 82 L 155 110",
-  // DC: panel array combiner → Inverter top-center
-  dcToInv: "M 310 145 Q 240 190 217 228",
-  // Battery: Inverter bottom → Battery top
-  invToBatt: "M 175 306 Q 152 340 107 352",
-  // AC: Inverter right → Smart Meter left
-  invToMeter: "M 278 267 L 330 267",
-  // Home: Smart Meter right → Home Loads left
-  meterToHome: "M 450 267 L 495 267",
-};
+// ── Helpers ─────────────────────────────────────────────────────────────────
 
-// Panel cell grid (3 cols × 2 rows)
-function PanelCells({ px, py }) {
-  return Array.from({ length: 3 }).flatMap((_, c) =>
-    Array.from({ length: 2 }).map((_, r) => (
-      <rect
-        key={`${c}-${r}`}
-        x={px + 5 + c * 34} y={py + 5 + r * 28}
-        width={30} height={24} rx={2}
-        fill="#1d4ed8" stroke="#60a5fa" strokeWidth={0.7}
-      />
-    ))
+function SunRays({ cx, cy, r1 = 40, r2 = 54 }) {
+  return (
+    <g className="svg-sun-rays" style={{ transformOrigin: `${cx}px ${cy}px` }}>
+      {[0, 22.5, 45, 67.5, 90, 112.5, 135, 157.5, 180, 202.5, 225, 247.5, 270, 292.5, 315, 337.5].map((a) => {
+        const rad = (a * Math.PI) / 180;
+        return (
+          <line key={a}
+            x1={cx + r1 * Math.cos(rad)} y1={cy + r1 * Math.sin(rad)}
+            x2={cx + r2 * Math.cos(rad)} y2={cy + r2 * Math.sin(rad)}
+            stroke="#FACC15" strokeWidth={a % 45 === 0 ? 2 : 1.2}
+            strokeLinecap="round" opacity={0.8}
+          />
+        );
+      })}
+    </g>
   );
 }
 
-// Individual sun ray line
-function SunRay({ angle }) {
-  const [r1, r2] = [55, 73];
-  const rad = (angle * Math.PI) / 180;
+function PanelFace({ x, y, w = 46, h = 30 }) {
+  const cells = [];
+  for (let c = 0; c < 4; c++)
+    for (let r = 0; r < 2; r++)
+      cells.push(<rect key={`${c}${r}`}
+        x={x + 2 + c * ((w - 4) / 4)} y={y + 2 + r * ((h - 4) / 2)}
+        width={(w - 4) / 4 - 1} height={(h - 4) / 2 - 1}
+        rx={1} fill="#1d4ed8" stroke="#60a5fa" strokeWidth={0.5} />);
   return (
-    <line
-      x1={68 + r1 * Math.cos(rad)} y1={72 + r1 * Math.sin(rad)}
-      x2={68 + r2 * Math.cos(rad)} y2={72 + r2 * Math.sin(rad)}
-      stroke="#FACC15" strokeWidth={angle % 45 === 0 ? 2.5 : 1.5}
-      strokeLinecap="round" opacity="0.8"
-    />
+    <g>
+      <rect x={x} y={y} width={w} height={h} rx={3} fill="#1e3a8a" stroke="#3b82f6" strokeWidth={1.2} />
+      {cells}
+      {/* Glass sheen */}
+      <path d={`M ${x + 3} ${y + 3} L ${x + 14} ${y + 3} L ${x + 9} ${y + 11} Z`} fill="white" opacity={0.08} />
+    </g>
   );
 }
 
-// Animated particle along a path
-function Dot({ path, dur, begin, color, r = 4.5 }) {
+function Card({ x, y, w, h, accent, children }) {
   return (
-    <circle r={r} fill={color} filter="url(#rfGlow)">
-      <animateMotion dur={`${dur}s`} repeatCount="indefinite" begin={`${begin}s`} path={path} />
-    </circle>
+    <g>
+      {/* Subtle glow behind card */}
+      <rect x={x - 2} y={y - 2} width={w + 4} height={h + 4} rx={12} fill={accent} opacity={0.06} />
+      {/* Card body */}
+      <rect x={x} y={y} width={w} height={h} rx={10} fill="#1E293B" stroke={accent} strokeWidth={1.2} strokeOpacity={0.45} />
+      {/* Top accent stripe */}
+      <rect x={x} y={y} width={w} height={5} fill={accent} rx={0}/>
+      <rect x={x} y={y} width={w} height={5} rx={10} fill={accent} />
+      {children}
+    </g>
   );
 }
 
-// Cable with guide + animated dashes + particles
-function Cable({ path, color, dashClass, particles, particleDur }) {
+// Horizontal arrow + label pill
+function HArrow({ x1, x2, y, color, label }) {
+  const mid = (x1 + x2) / 2;
+  const lw = label.length * 5.5 + 10;
   return (
-    <>
-      <path d={path} stroke={color} strokeWidth={2} strokeOpacity={0.15} fill="none" />
-      <path d={path} stroke={color} strokeWidth={2.8} fill="none" strokeDasharray="12 8" className={dashClass} />
-      {particles.map((begin, i) => (
-        <Dot key={i} path={path} dur={particleDur} begin={begin} color={color} />
-      ))}
-    </>
+    <g>
+      {/* Shadow line */}
+      <line x1={x1} y1={y + 1} x2={x2} y2={y + 1} stroke={color} strokeWidth={3.5} strokeOpacity={0.15} />
+      {/* Main line */}
+      <line x1={x1} y1={y} x2={x2 - 7} y2={y} stroke={color} strokeWidth={3} />
+      {/* Arrowhead */}
+      <polygon points={`${x2 - 8},${y - 5} ${x2},${y} ${x2 - 8},${y + 5}`} fill={color} />
+      {/* Label pill */}
+      <rect x={mid - lw / 2} y={y - 18} width={lw} height={14} rx={7} fill={color} />
+      <text x={mid} y={y - 8} textAnchor="middle" fill={color === "#FACC15" ? "#78350f" : "white"} fontSize={8} fontWeight="bold" fontFamily="monospace">{label}</text>
+    </g>
   );
 }
 
-const RAY_ANGLES = Array.from({ length: 16 }, (_, i) => i * 22.5);
-
-export default function SolarFlowAnimation() {
+// Vertical arrow + label pill
+function VArrow({ x, y1, y2, color, label, bid = false }) {
+  const mid = (y1 + y2) / 2;
+  const lw = label.length * 5 + 10;
   return (
-    <div className="relative w-full h-full float-anim" data-testid="solar-animation">
-      <svg viewBox="0 0 720 440" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full drop-shadow-2xl">
-        <defs>
-          <radialGradient id="rfSunGlow" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="#FACC15" stopOpacity="0.75" />
-            <stop offset="60%" stopColor="#F59E0B" stopOpacity="0.35" />
-            <stop offset="100%" stopColor="#F59E0B" stopOpacity="0" />
-          </radialGradient>
-          <filter id="rfGlow">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur" />
-            <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-          </filter>
-          <filter id="rfSoftGlow">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur" />
-            <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-          </filter>
-          <pattern id="rfGrid" width="32" height="32" patternUnits="userSpaceOnUse">
-            <path d="M 32 0 L 0 0 0 32" fill="none" stroke="#1E3A8A" strokeWidth="0.4" opacity="0.45" />
-          </pattern>
-          <linearGradient id="rfInvGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#334155" />
-            <stop offset="100%" stopColor="#1e293b" />
-          </linearGradient>
-        </defs>
+    <g>
+      {bid && <polygon points={`${x - 4},${y1 + 7} ${x},${y1} ${x + 4},${y1 + 7}`} fill={color} />}
+      <line x1={x} y1={bid ? y1 + 6 : y1} x2={x} y2={y2 - 7} stroke={color} strokeWidth={3} />
+      <polygon points={`${x - 5},${y2 - 8} ${x},${y2} ${x + 5},${y2 - 8}`} fill={color} />
+      <rect x={x - lw / 2} y={mid - 7} width={lw} height={14} rx={7} fill={color} />
+      <text x={x} y={mid + 1} textAnchor="middle" fill="white" fontSize={7.5} fontWeight="bold" fontFamily="monospace">{label}</text>
+    </g>
+  );
+}
 
-        {/* Background */}
-        <rect width="720" height="440" fill="url(#rfGrid)" />
+// Step number badge (circle)
+function StepBadge({ cx, cy, n, color }) {
+  return (
+    <g>
+      <circle cx={cx} cy={cy} r={11} fill={color} />
+      <text x={cx} y={cy + 4} textAnchor="middle" fill={color === "#FACC15" ? "#78350f" : "white"} fontSize={9.5} fontWeight="bold" fontFamily="Outfit,sans-serif">{n}</text>
+    </g>
+  );
+}
 
-        {/* ── SUN ── */}
-        <circle cx="68" cy="72" r="95" fill="url(#rfSunGlow)" className="svg-sun-pulse" />
-        <circle cx="68" cy="72" r="75" fill="#FACC15" opacity="0.07" className="svg-sun-pulse-delay" />
-        <g style={{ transformOrigin: "68px 72px" }} className="svg-sun-rays">
-          {RAY_ANGLES.map(a => <SunRay key={a} angle={a} />)}
-        </g>
-        <circle cx="68" cy="72" r="50" fill="#FDE68A" filter="url(#rfSoftGlow)" />
-        <circle cx="68" cy="72" r="42" fill="#FACC15" />
-        <circle cx="68" cy="72" r="32" fill="#FEF3C7" />
-        <text x="68" y="76" textAnchor="middle" fill="#78350F" fontSize="10" fontWeight="bold" fontFamily="Outfit,sans-serif">SUN</text>
-        <text x="68" y="88" textAnchor="middle" fill="#92400e" fontSize="7">5,778 K</text>
+// ── Main Component ────────────────────────────────────────────────────────────
 
-        {/* Photon beam guide lines */}
-        {[PATHS.photon1, PATHS.photon2, PATHS.photon3, PATHS.photon4].map((p, i) => (
-          <path key={i} d={p} stroke="#FACC15" strokeWidth={1} strokeOpacity={0.18} fill="none" />
-        ))}
-        {/* Photon animated dashes */}
-        {[PATHS.photon1, PATHS.photon2, PATHS.photon3, PATHS.photon4].map((p, i) => (
-          <path key={i} d={p} stroke="#FACC15" strokeWidth={1.6} fill="none"
-            strokeDasharray="5 4" style={{ animation: `flowDashAnim ${0.7 + i * 0.1}s linear infinite ${i * 0.15}s` }} />
-        ))}
-        {/* Photon particles */}
-        {[PATHS.photon1, PATHS.photon2, PATHS.photon3, PATHS.photon4].map((p, i) =>
-          [0, 0.5].map((b, j) => <Dot key={`ph-${i}-${j}`} path={p} dur={0.8 + i * 0.1} begin={b} color="#FACC15" r={3.5} />)
-        )}
-        <text x="128" y="42" fill="#FACC15" fontSize="8" opacity="0.6" fontFamily="monospace">PHOTONS</text>
+export default function SolarFlowDiagram() {
+  // Layout constants
+  const ROW1_Y = 18, CARD_H = 132, CARD_W = 108;
+  const ROW2_Y = ROW1_Y + CARD_H + 44; // 194
+  const ROW2_H = 78;
+  const MID_Y = ROW1_Y + CARD_H / 2; // ~84
 
-        {/* ── 3 SOLAR PANELS ── */}
-        {/* Mounting rail */}
-        <rect x="148" y="118" width="360" height="8" rx="2" fill="#334155" />
-        <line x1="200" y1="126" x2="200" y2="145" stroke="#475569" strokeWidth="4" strokeLinecap="round" />
-        <line x1="320" y1="126" x2="320" y2="145" stroke="#475569" strokeWidth="4" strokeLinecap="round" />
-        <line x1="440" y1="126" x2="440" y2="145" stroke="#475569" strokeWidth="4" strokeLinecap="round" />
+  const PANELS_X = 105, INV_X = 285, HOME_X = 468, HOME_W = 256;
+  const BATT_X = 285, GRID_X = INV_X + CARD_W + 8; // 401
 
-        {/* Panel 1 */}
-        <rect x="148" y="40" width="108" height="76" rx="5" fill="#1e3a8a" stroke="#3b82f6" strokeWidth="2" />
-        <PanelCells px={148} py={40} />
-        <rect x="148" y="40" width="108" height="76" rx="5" fill="#60a5fa" opacity="0.05" />
-        {/* Sheen */}
-        <path d="M 155 44 L 175 44 L 165 56 Z" fill="white" opacity="0.08" />
+  const INV_CX = INV_X + CARD_W / 2; // 339
+  const BATT_CX = BATT_X + CARD_W / 2; // 339
 
-        {/* Panel 2 */}
-        <rect x="272" y="40" width="108" height="76" rx="5" fill="#1e3a8a" stroke="#3b82f6" strokeWidth="2" />
-        <PanelCells px={272} py={40} />
-        <rect x="272" y="40" width="108" height="76" rx="5" fill="#60a5fa" opacity="0.05" />
-        <path d="M 279 44 L 299 44 L 289 56 Z" fill="white" opacity="0.08" />
+  const HOME_GRID_X = HOME_X + 90; // 558
 
-        {/* Panel 3 */}
-        <rect x="396" y="40" width="108" height="76" rx="5" fill="#1e3a8a" stroke="#3b82f6" strokeWidth="2" />
-        <PanelCells px={396} py={40} />
-        <rect x="396" y="40" width="108" height="76" rx="5" fill="#60a5fa" opacity="0.05" />
-        <path d="M 403 44 L 423 44 L 413 56 Z" fill="white" opacity="0.08" />
+  return (
+    <div
+      data-testid="solar-animation"
+      className="w-full rounded-2xl overflow-hidden border border-slate-700/40 shadow-2xl"
+      style={{ background: "linear-gradient(145deg,#0f172a 0%,#1a2744 50%,#0f172a 100%)" }}
+    >
+      {/* ── Header bar ────────────────────────────────────────────────────── */}
+      <div className="flex flex-wrap items-center justify-between px-4 py-2.5 border-b border-slate-700/40">
+        <span className="text-white text-xs font-bold uppercase tracking-widest" style={{ fontFamily: "Outfit,sans-serif" }}>
+          Solar Energy Flow System
+        </span>
+        <div className="flex flex-wrap gap-3">
+          {[["#F59E0B", "DC Power"], ["#22C55E", "AC Power"], ["#3B82F6", "Battery"], ["#A78BFA", "Grid"]].map(([c, l]) => (
+            <div key={l} className="flex items-center gap-1.5">
+              <div className="w-5 h-1.5 rounded-full" style={{ backgroundColor: c }} />
+              <span className="text-slate-400 text-xs">{l}</span>
+            </div>
+          ))}
+        </div>
+      </div>
 
-        {/* Panel labels */}
-        <text x="202" y="160" textAnchor="middle" fill="#64748b" fontSize="8" fontFamily="monospace">Panel A</text>
-        <text x="326" y="160" textAnchor="middle" fill="#64748b" fontSize="8" fontFamily="monospace">Panel B</text>
-        <text x="450" y="160" textAnchor="middle" fill="#64748b" fontSize="8" fontFamily="monospace">Panel C</text>
+      {/* ── SVG Diagram ───────────────────────────────────────────────────── */}
+      <div className="px-3 pt-4 pb-3">
+        <svg viewBox="0 0 740 284" className="w-full" style={{ fontFamily: "Inter,sans-serif" }}>
+          <defs>
+            <radialGradient id="sfd-sunGrad" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stopColor="#FEF3C7" />
+              <stop offset="55%" stopColor="#FACC15" />
+              <stop offset="100%" stopColor="#F59E0B" />
+            </radialGradient>
+            <filter id="sfd-glow">
+              <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="b" />
+              <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
+            </filter>
+            <filter id="sfd-glowSm">
+              <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="b" />
+              <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
+            </filter>
+          </defs>
 
-        {/* DC Combiner box */}
-        <rect x="278" y="165" width="66" height="32" rx="5" fill="#0f172a" stroke="#F59E0B" strokeWidth="1.5" />
-        <text x="311" y="185" textAnchor="middle" fill="#F59E0B" fontSize="8.5" fontWeight="bold" fontFamily="monospace">DC BUS</text>
-        {/* Wires from panels to combiner */}
-        <line x1="202" y1="126" x2="278" y2="181" stroke="#F59E0B" strokeWidth="1.5" strokeOpacity="0.3" strokeDasharray="4 3" />
-        <line x1="326" y1="126" x2="311" y2="165" stroke="#F59E0B" strokeWidth="1.5" strokeOpacity="0.3" strokeDasharray="4 3" />
-        <line x1="450" y1="126" x2="344" y2="181" stroke="#F59E0B" strokeWidth="1.5" strokeOpacity="0.3" strokeDasharray="4 3" />
+          {/* ══ SUN ══ cx=44 cy=84 ═════════════════════════════════════════ */}
+          <circle cx={44} cy={84} r={62} fill="#FACC15" opacity={0.04} />
+          <circle cx={44} cy={84} r={50} fill="#FACC15" opacity={0.08} />
+          <SunRays cx={44} cy={84} r1={38} r2={52} />
+          <circle cx={44} cy={84} r={35} fill="url(#sfd-sunGrad)" filter="url(#sfd-glow)" />
+          <circle cx={44} cy={84} r={25} fill="#FEF08A" />
+          <circle cx={44} cy={84} r={17} fill="#FFF9C4" />
+          <text x={44} y={88} textAnchor="middle" fill="#78350f" fontSize={8.5} fontWeight="bold">SUN</text>
 
-        {/* ── DC CABLE → INVERTER ── */}
-        <Cable
-          path={PATHS.dcToInv}
-          color="#F59E0B"
-          dashClass="svg-flow-1"
-          particles={[0, 0.9, 1.8]}
-          particleDur={2.7}
-        />
-        {/* DC label tag */}
-        <rect x="235" y="188" width="36" height="15" rx="4" fill="#F59E0B" />
-        <text x="253" y="199" textAnchor="middle" fill="#0f172a" fontSize="8" fontWeight="bold">DC IN</text>
+          {/* Radiation label */}
+          <text x={44} y={152} textAnchor="middle" fill="#64748b" fontSize={7} fontFamily="monospace">SOLAR RADIATION</text>
+          <text x={44} y={161} textAnchor="middle" fill="#64748b" fontSize={7} fontFamily="monospace">5,778 K</text>
 
-        {/* ── INVERTER ── */}
-        <rect x="158" y="228" width="120" height="78" rx="9" fill="url(#rfInvGrad)" stroke="#64748b" strokeWidth="2" />
-        {/* Ventilation slots */}
-        {[0, 1, 2, 3].map(i => (
-          <line key={i} x1={168} y1={238 + i * 8} x2={270} y2={238 + i * 8} stroke="#475569" strokeWidth="1" opacity="0.5" />
-        ))}
-        <text x="218" y="277" textAnchor="middle" fill="#94a3b8" fontSize="9" fontWeight="bold" fontFamily="monospace" letterSpacing="1">INVERTER</text>
-        {/* DC→AC wave icon */}
-        <path d="M 174 284 Q 179 280 184 284 Q 189 288 194 284" stroke="#F59E0B" strokeWidth="1.5" fill="none" />
-        <text x="175" y="295" fill="#F59E0B" fontSize="6.5" fontFamily="monospace">DC</text>
-        <path d="M 205 284 C 210 280 215 288 220 284" stroke="#4ade80" strokeWidth="1.5" fill="none" />
-        <text x="206" y="295" fill="#4ade80" fontSize="6.5" fontFamily="monospace">~AC</text>
-        {/* LED indicator */}
-        <circle cx="266" cy="236" r="4.5" fill="#4ade80" className="svg-glow-pulse" />
-        <text x="218" y="310" textAnchor="middle" fill="#475569" fontSize="7" fontFamily="monospace">220V / 50Hz</text>
+          {/* Sun → Panels arrow */}
+          <HArrow x1={80} x2={PANELS_X} y={MID_Y} color="#FACC15" label="Photons" />
 
-        {/* ── BATTERY CABLE ── */}
-        <Cable
-          path={PATHS.invToBatt}
-          color="#60a5fa"
-          dashClass="svg-flow-2"
-          particles={[0, 1.1]}
-          particleDur={2.2}
-        />
-        {/* Battery label tag */}
-        <rect x="120" y="336" width="46" height="15" rx="4" fill="#60a5fa" />
-        <text x="143" y="347" textAnchor="middle" fill="#0f172a" fontSize="8" fontWeight="bold">CHARGE</text>
+          {/* ══ SOLAR PANELS CARD ══════════════════════════════════════════ */}
+          <Card x={PANELS_X} y={ROW1_Y} w={CARD_W} h={CARD_H} accent="#F59E0B">
+            <StepBadge cx={PANELS_X + CARD_W - 13} cy={ROW1_Y + 13} n="1" color="#F59E0B" />
 
-        {/* ── BATTERY ── */}
-        <rect x="50" y="352" width="115" height="72" rx="8" fill="#0f172a" stroke="#60a5fa" strokeWidth="2" />
-        {/* Terminal bumps */}
-        <rect x="78" y="346" width="22" height="10" rx="3" fill="#475569" />
-        <rect x="108" y="346" width="22" height="10" rx="3" fill="#475569" />
-        {/* Capacity bar */}
-        <rect x="60" y="373" width="95" height="13" rx="3" fill="#1e3a8a" />
-        <rect x="62" y="375" width="70" height="9" rx="2" fill="#4ade80" />
-        <circle cx="135" cy="380" r="2.5" fill="#1e293b" />
-        <text x="107" y="367" textAnchor="middle" fill="#60a5fa" fontSize="9" fontWeight="bold" fontFamily="monospace">BATTERY</text>
-        <text x="107" y="400" textAnchor="middle" fill="#4ade80" fontSize="8" fontFamily="monospace">74% · 10 kWh</text>
-        <text x="107" y="413" textAnchor="middle" fill="#475569" fontSize="7" fontFamily="monospace">LITHIUM-ION</text>
+            {/* Two mini panels side by side */}
+            <PanelFace x={PANELS_X + 8} y={ROW1_Y + 11} w={44} h={28} />
+            <PanelFace x={PANELS_X + 56} y={ROW1_Y + 11} w={44} h={28} />
 
-        {/* ── AC CABLE → SMART METER ── */}
-        <Cable
-          path={PATHS.invToMeter}
-          color="#4ade80"
-          dashClass="svg-flow-3"
-          particles={[0, 0.9, 1.8]}
-          particleDur={2.1}
-        />
-        {/* AC label tag */}
-        <rect x="289" y="252" width="36" height="15" rx="4" fill="#4ade80" />
-        <text x="307" y="263" textAnchor="middle" fill="#0f172a" fontSize="8" fontWeight="bold">AC OUT</text>
+            {/* Mounting rail */}
+            <rect x={PANELS_X + 6} y={ROW1_Y + 39} width={96} height={3} rx={1} fill="#475569" />
+            <line x1={PANELS_X + 28} y1={ROW1_Y + 42} x2={PANELS_X + 28} y2={ROW1_Y + 52} stroke="#475569" strokeWidth={2.5} strokeLinecap="round" />
+            <line x1={PANELS_X + 80} y1={ROW1_Y + 42} x2={PANELS_X + 80} y2={ROW1_Y + 52} stroke="#475569" strokeWidth={2.5} strokeLinecap="round" />
+            {/* DC wire from panels */}
+            <line x1={PANELS_X + 28} y1={ROW1_Y + 52} x2={PANELS_X + 54} y2={ROW1_Y + 60} stroke="#F59E0B" strokeWidth={1.5} strokeOpacity={0.6} />
+            <line x1={PANELS_X + 80} y1={ROW1_Y + 52} x2={PANELS_X + 54} y2={ROW1_Y + 60} stroke="#F59E0B" strokeWidth={1.5} strokeOpacity={0.6} />
+            <circle cx={PANELS_X + 54} cy={ROW1_Y + 60} r={3.5} fill="#F59E0B" opacity={0.6} />
 
-        {/* ── SMART METER ── */}
-        <rect x="330" y="228" width="120" height="78" rx="9" fill="#0f172a" stroke="#F59E0B" strokeWidth="2" />
-        <text x="390" y="248" textAnchor="middle" fill="#94a3b8" fontSize="8" fontFamily="monospace" letterSpacing="0.5">SMART METER</text>
-        <circle cx="437" cy="237" r="4.5" fill="#FACC15" className="svg-glow-pulse" />
-        <text x="390" y="272" textAnchor="middle" fill="#4ade80" fontSize="18" fontWeight="bold" fontFamily="monospace">14.8</text>
-        <text x="390" y="288" textAnchor="middle" fill="#FACC15" fontSize="9" fontFamily="monospace">kWh · TODAY</text>
-        <text x="390" y="300" textAnchor="middle" fill="#64748b" fontSize="7.5" fontFamily="monospace">GRID EXPORT: 2.1 kWh</text>
+            {/* Labels */}
+            <text x={PANELS_X + 54} y={ROW1_Y + 80} textAnchor="middle" fill="white" fontSize={10} fontWeight="bold">SOLAR PANELS</text>
+            <text x={PANELS_X + 54} y={ROW1_Y + 93} textAnchor="middle" fill="#94a3b8" fontSize={7.5} fontFamily="monospace">PV Array · 3 kW</text>
+            {/* DC badge */}
+            <rect x={PANELS_X + 20} y={ROW1_Y + 100} width={68} height={14} rx={7} fill="#F59E0B" fillOpacity={0.18} />
+            <text x={PANELS_X + 54} y={ROW1_Y + 110} textAnchor="middle" fill="#F59E0B" fontSize={8} fontWeight="bold" fontFamily="monospace">DC OUTPUT · 48V</text>
+          </Card>
 
-        {/* ── AC CABLE → HOME LOADS ── */}
-        <Cable
-          path={PATHS.meterToHome}
-          color="#4ade80"
-          dashClass="svg-flow-4"
-          particles={[0, 1.2]}
-          particleDur={1.8}
-        />
+          {/* Panels → Inverter DC arrow */}
+          <HArrow x1={PANELS_X + CARD_W} x2={INV_X} y={MID_Y} color="#F59E0B" label="DC 48V" />
 
-        {/* ── HOME LOADS ── */}
-        <rect x="495" y="170" width="208" height="250" rx="10" fill="#0f172a" stroke="#3b82f6" strokeWidth="2" />
-        {/* Header */}
-        <rect x="495" y="170" width="208" height="32" rx="10" fill="#1e3a8a" />
-        <rect x="495" y="190" width="208" height="12" fill="#1e3a8a" />
-        <text x="599" y="190" textAnchor="middle" fill="#60a5fa" fontSize="9" fontWeight="bold" fontFamily="monospace" letterSpacing="1">HOME LOADS</text>
+          {/* ══ INVERTER CARD ═════════════════════════════════════════════ */}
+          <Card x={INV_X} y={ROW1_Y} w={CARD_W} h={CARD_H} accent="#22C55E">
+            <StepBadge cx={INV_X + CARD_W - 13} cy={ROW1_Y + 13} n="2" color="#22C55E" />
 
-        {/* ─ TV ─ */}
-        <rect x="508" y="212" width="80" height="54" rx="4" fill="#1e293b" stroke="#334155" strokeWidth="1.5" />
-        <rect x="512" y="215" width="72" height="42" rx="2" fill="#0f172a" />
-        {/* TV screen content - simple bars */}
-        <rect x="515" y="218" width="66" height="8" rx="1" fill="#1d4ed8" opacity="0.7" />
-        <rect x="515" y="228" width="40" height="6" rx="1" fill="#60a5fa" opacity="0.5" />
-        <rect x="515" y="236" width="55" height="6" rx="1" fill="#60a5fa" opacity="0.3" />
-        <rect x="515" y="244" width="30" height="6" rx="1" fill="#60a5fa" opacity="0.4" />
-        {/* TV stand */}
-        <line x1="544" y1="266" x2="544" y2="272" stroke="#475569" strokeWidth="3" />
-        <line x1="533" y1="272" x2="555" y2="272" stroke="#475569" strokeWidth="3" />
-        {/* Power dot */}
-        <circle cx="582" cy="218" r="3" fill="#4ade80" className="svg-glow-pulse" />
-        <text x="548" y="286" textAnchor="middle" fill="#475569" fontSize="8" fontFamily="monospace">TELEVISION</text>
+            {/* Inverter box illustration */}
+            <rect x={INV_X + 10} y={ROW1_Y + 11} width={88} height={50} rx={6} fill="#334155" stroke="#64748b" strokeWidth={1.2} />
+            {/* Vent lines */}
+            {[0, 1, 2, 3, 4].map(i => (
+              <line key={i} x1={INV_X + 15} y1={ROW1_Y + 17 + i * 7} x2={INV_X + 65} y2={ROW1_Y + 17 + i * 7} stroke="#475569" strokeWidth={0.9} />
+            ))}
+            {/* Brand plate */}
+            <rect x={INV_X + 67} y={ROW1_Y + 13} width={28} height={46} rx={3} fill="#1e293b" stroke="#64748b" strokeWidth={0.8} />
+            {/* LED cluster */}
+            <circle cx={INV_X + 78} cy={ROW1_Y + 22} r={3.5} fill="#4ade80" filter="url(#sfd-glowSm)" />
+            <circle cx={INV_X + 78} cy={ROW1_Y + 32} r={3.5} fill="#4ade80" opacity={0.4} />
+            <circle cx={INV_X + 78} cy={ROW1_Y + 42} r={3.5} fill="#FACC15" opacity={0.6} />
+            {/* DC input indicator */}
+            <rect x={INV_X + 10} y={ROW1_Y + 61} width={28} height={6} rx={3} fill="#F59E0B" opacity={0.3} />
+            <text x={INV_X + 24} y={ROW1_Y + 67} textAnchor="middle" fill="#F59E0B" fontSize={6.5} fontFamily="monospace">DC IN</text>
+            {/* AC output indicator */}
+            <rect x={INV_X + 70} y={ROW1_Y + 61} width={28} height={6} rx={3} fill="#22C55E" opacity={0.3} />
+            <text x={INV_X + 84} y={ROW1_Y + 67} textAnchor="middle" fill="#22C55E" fontSize={6.5} fontFamily="monospace">AC OUT</text>
+            {/* Waveform */}
+            <path d={`M ${INV_X + 13} ${ROW1_Y + 74} Q ${INV_X + 18} ${ROW1_Y + 70} ${INV_X + 23} ${ROW1_Y + 74} Q ${INV_X + 28} ${ROW1_Y + 78} ${INV_X + 33} ${ROW1_Y + 74}`} stroke="#22C55E" strokeWidth={1.8} fill="none" />
 
-        {/* ─ AIR CONDITIONER ─ */}
-        <rect x="603" y="212" width="88" height="40" rx="5" fill="#1e293b" stroke="#334155" strokeWidth="1.5" />
-        {/* AC fins */}
-        {[0, 1, 2, 3, 4].map(i => (
-          <line key={i} x1={608} y1={220 + i * 5} x2={686} y2={220 + i * 5} stroke="#334155" strokeWidth="1" />
-        ))}
-        {/* Fan circle */}
-        <circle cx="680" cy="230" r="9" fill="#1e3a8a" stroke="#3b82f6" strokeWidth="1" />
-        <circle cx="680" cy="230" r="4" fill="#3b82f6" />
-        <circle cx="678" cy="236" r="2" fill="#60a5fa" className="svg-glow-pulse" />
-        <text x="645" y="264" textAnchor="middle" fill="#475569" fontSize="8" fontFamily="monospace">AIR CONDITIONER</text>
+            {/* Labels */}
+            <text x={INV_X + 54} y={ROW1_Y + 92} textAnchor="middle" fill="white" fontSize={10} fontWeight="bold">INVERTER</text>
+            <text x={INV_X + 54} y={ROW1_Y + 105} textAnchor="middle" fill="#94a3b8" fontSize={7.5} fontFamily="monospace">DC → AC · 3 kVA</text>
+            <rect x={INV_X + 17} y={ROW1_Y + 111} width={74} height={14} rx={7} fill="#22C55E" fillOpacity={0.15} />
+            <text x={INV_X + 54} y={ROW1_Y + 121} textAnchor="middle" fill="#22C55E" fontSize={7.5} fontWeight="bold" fontFamily="monospace">220V AC · 50Hz</text>
+          </Card>
 
-        {/* ─ LIGHTS ─ */}
-        <circle cx="540" cy="320" r="22" fill="#FACC15" opacity="0.12" className="svg-house-glow" />
-        <circle cx="540" cy="320" r="15" fill="#FACC15" opacity="0.3" />
-        <circle cx="540" cy="320" r="10" fill="#FACC15" opacity="0.8" />
-        {/* Bulb base */}
-        <rect x="534" y="332" width="12" height="8" rx="2" fill="#94a3b8" />
-        {/* Glow rays */}
-        {[0, 60, 120, 180, 240, 300].map(a => {
-          const rad = (a * Math.PI) / 180;
-          return <line key={a} x1={540 + 16 * Math.cos(rad)} y1={320 + 16 * Math.sin(rad)}
-            x2={540 + 22 * Math.cos(rad)} y2={320 + 22 * Math.sin(rad)}
-            stroke="#FACC15" strokeWidth="1.5" opacity="0.5" />;
-        })}
-        <text x="540" y="352" textAnchor="middle" fill="#475569" fontSize="8" fontFamily="monospace">LIGHTING</text>
+          {/* Inverter → Home AC arrow */}
+          <HArrow x1={INV_X + CARD_W} x2={HOME_X} y={MID_Y} color="#22C55E" label="AC 220V" />
 
-        {/* ─ REFRIGERATOR ─ */}
-        <rect x="605" y="278" width="82" height="128" rx="5" fill="#1e293b" stroke="#334155" strokeWidth="1.5" />
-        {/* Divider */}
-        <line x1="605" y1="330" x2="687" y2="330" stroke="#334155" strokeWidth="1.5" />
-        {/* Handle top */}
-        <rect x="682" y="288" width="6" height="30" rx="3" fill="#475569" />
-        {/* Handle bottom */}
-        <rect x="682" y="340" width="6" height="30" rx="3" fill="#475569" />
-        {/* Temp display */}
-        <rect x="612" y="285" width="30" height="18" rx="3" fill="#0f172a" />
-        <text x="627" y="297" textAnchor="middle" fill="#4ade80" fontSize="8" fontFamily="monospace">4°C</text>
-        <circle cx="638" cy="297" r="2.5" fill="#4ade80" className="svg-glow-pulse" />
-        <text x="646" y="416" textAnchor="middle" fill="#475569" fontSize="8" fontFamily="monospace">REFRIGERATOR</text>
+          {/* ══ HOME LOADS CARD ══════════════════════════════════════════ */}
+          <Card x={HOME_X} y={ROW1_Y} w={HOME_W} h={CARD_H} accent="#F59E0B">
+            <StepBadge cx={HOME_X + HOME_W - 13} cy={ROW1_Y + 13} n="3" color="#F59E0B" />
 
-        {/* ── LABELS ── */}
-        <text x="68" y="148" textAnchor="middle" fill="#FACC15" fontSize="9" opacity="0.7" fontFamily="monospace">SOLAR SOURCE</text>
-        <rect x="148" y="415" width="360" height="18" rx="4" fill="#0f172a" opacity="0.6" />
-        <text x="328" y="427" textAnchor="middle" fill="#3b82f6" fontSize="8.5" fontFamily="monospace" letterSpacing="0.5">SOLAR PANEL ARRAY · 3kW CAPACITY</text>
-      </svg>
+            {/* House silhouette */}
+            <polygon points={`${HOME_X + 10},${ROW1_Y + 62} ${HOME_X + 40},${ROW1_Y + 38} ${HOME_X + 70},${ROW1_Y + 62}`} fill="#1e3a8a" stroke="#3b82f6" strokeWidth={1} />
+            <rect x={HOME_X + 14} y={ROW1_Y + 62} width={52} height={42} rx={2} fill="#0f172a" stroke="#3b82f6" strokeWidth={1} />
+            <rect x={HOME_X + 18} y={ROW1_Y + 68} width={16} height={12} rx={2} fill="#60a5fa" opacity={0.55} />
+            <rect x={HOME_X + 46} y={ROW1_Y + 68} width={16} height={12} rx={2} fill="#60a5fa" opacity={0.55} />
+            <rect x={HOME_X + 29} y={ROW1_Y + 87} width={14} height={17} rx={1} fill="#1e3a8a" />
+            {/* Power-on glow */}
+            <circle cx={HOME_X + 40} cy={ROW1_Y + 50} r={6} fill="#FACC15" filter="url(#sfd-glowSm)" opacity={0.8} />
+
+            {/* ── Appliance icons (right two-thirds of card) ── */}
+            {/* TV */}
+            <rect x={HOME_X + 85} y={ROW1_Y + 12} width={46} height={30} rx={4} fill="#0f172a" stroke="#475569" strokeWidth={1} />
+            <rect x={HOME_X + 89} y={ROW1_Y + 15} width={38} height={21} rx={2} fill="#1d4ed8" />
+            <rect x={HOME_X + 93} y={ROW1_Y + 18} width={30} height={14} rx={1} fill="#1e40af" />
+            {[0, 1, 2].map(i => <line key={i} x1={HOME_X + 95} y1={ROW1_Y + 20 + i * 4} x2={HOME_X + 120} y2={ROW1_Y + 20 + i * 4} stroke="#3b82f6" strokeWidth={0.6} opacity={0.5} />)}
+            <line x1={HOME_X + 105} y1={ROW1_Y + 42} x2={HOME_X + 108} y2={ROW1_Y + 47} stroke="#475569" strokeWidth={2} />
+            <line x1={HOME_X + 99} y1={ROW1_Y + 47} x2={HOME_X + 114} y2={ROW1_Y + 47} stroke="#475569" strokeWidth={2} />
+            <circle cx={HOME_X + 128} cy={ROW1_Y + 16} r={3} fill="#4ade80" filter="url(#sfd-glowSm)" />
+            <text x={HOME_X + 108} y={ROW1_Y + 56} textAnchor="middle" fill="#64748b" fontSize={7.5} fontFamily="monospace">TELEVISION</text>
+
+            {/* Air Conditioner */}
+            <rect x={HOME_X + 147} y={ROW1_Y + 12} width={54} height={30} rx={4} fill="#0f172a" stroke="#475569" strokeWidth={1} />
+            {[0, 1, 2, 3].map(i => <line key={i} x1={HOME_X + 151} y1={ROW1_Y + 17 + i * 5} x2={HOME_X + 197} y2={ROW1_Y + 17 + i * 5} stroke="#334155" strokeWidth={1} />)}
+            <circle cx={HOME_X + 193} cy={ROW1_Y + 22} r={7} fill="#1e3a8a" stroke="#3b82f6" strokeWidth={1} />
+            <circle cx={HOME_X + 193} cy={ROW1_Y + 22} r={3.5} fill="#3b82f6" opacity={0.8} />
+            <circle cx={HOME_X + 191} cy={ROW1_Y + 29} r={2.5} fill="#4ade80" filter="url(#sfd-glowSm)" />
+            <text x={HOME_X + 174} y={ROW1_Y + 56} textAnchor="middle" fill="#64748b" fontSize={7.5} fontFamily="monospace">AIR CONDITIONER</text>
+
+            {/* Light Bulb */}
+            <circle cx={HOME_X + 108} cy={ROW1_Y + 92} r={16} fill="#FACC15" opacity={0.08} />
+            <circle cx={HOME_X + 108} cy={ROW1_Y + 92} r={11} fill="#FACC15" opacity={0.22} />
+            <circle cx={HOME_X + 108} cy={ROW1_Y + 92} r={7.5} fill="#FACC15" opacity={0.75} />
+            <rect x={HOME_X + 105} y={ROW1_Y + 100} width={6} height={6} rx={1} fill="#94a3b8" />
+            {[30, 90, 150, 210, 270, 330].map(a => {
+              const r = (a * Math.PI) / 180;
+              return <line key={a}
+                x1={HOME_X + 108 + 12 * Math.cos(r)} y1={ROW1_Y + 92 + 12 * Math.sin(r)}
+                x2={HOME_X + 108 + 17 * Math.cos(r)} y2={ROW1_Y + 92 + 17 * Math.sin(r)}
+                stroke="#FACC15" strokeWidth={1.2} opacity={0.5} />;
+            })}
+            <text x={HOME_X + 108} y={ROW1_Y + 117} textAnchor="middle" fill="#64748b" fontSize={7.5} fontFamily="monospace">LIGHTING</text>
+
+            {/* Refrigerator */}
+            <rect x={HOME_X + 168} y={ROW1_Y + 68} width={42} height={62} rx={4} fill="#0f172a" stroke="#475569" strokeWidth={1} />
+            <line x1={HOME_X + 168} y1={ROW1_Y + 100} x2={HOME_X + 210} y2={ROW1_Y + 100} stroke="#334155" strokeWidth={1.2} />
+            <rect x={HOME_X + 207} y={ROW1_Y + 76} width={5} height={18} rx={2} fill="#64748b" />
+            <rect x={HOME_X + 207} y={ROW1_Y + 104} width={5} height={18} rx={2} fill="#64748b" />
+            <text x={HOME_X + 175} y={ROW1_Y + 79} fill="#64748b" fontSize={7} fontFamily="monospace">4°C</text>
+            <text x={HOME_X + 175} y={ROW1_Y + 110} fill="#64748b" fontSize={7} fontFamily="monospace">-18°C</text>
+            <circle cx={HOME_X + 180} cy={ROW1_Y + 89} r={2.5} fill="#4ade80" filter="url(#sfd-glowSm)" />
+            <text x={HOME_X + 189} y={ROW1_Y + 139} textAnchor="middle" fill="#64748b" fontSize={7.5} fontFamily="monospace">REFRIGERATOR</text>
+
+            {/* Card label at bottom */}
+            <text x={HOME_X + HOME_W / 2} y={ROW1_Y + 148} textAnchor="middle" fill="white" fontSize={9.5} fontWeight="bold">HOME LOADS</text>
+          </Card>
+
+          {/* ══ BATTERY CARD ═════════════════════════════════════════════ */}
+          <Card x={BATT_X} y={ROW2_Y} w={CARD_W} h={ROW2_H} accent="#3B82F6">
+            {/* Battery icon */}
+            <rect x={BATT_X + 14} y={ROW2_Y + 10} width={80} height={48} rx={5} fill="#0f172a" stroke="#3b82f6" strokeWidth={1.2} />
+            {/* Terminal bumps */}
+            <rect x={BATT_X + 24} y={ROW2_Y + 6} width={16} height={8} rx={3} fill="#475569" />
+            <rect x={BATT_X + 68} y={ROW2_Y + 6} width={16} height={8} rx={3} fill="#475569" />
+            {/* Capacity bar background */}
+            <rect x={BATT_X + 20} y={ROW2_Y + 28} width={68} height={13} rx={3} fill="#1e3a8a" />
+            {/* Charge level (74%) */}
+            <rect x={BATT_X + 22} y={ROW2_Y + 30} width={50} height={9} rx={2} fill="#4ade80" />
+            {/* Battery text */}
+            <text x={BATT_X + 54} y={ROW2_Y + 22} textAnchor="middle" fill="#3b82f6" fontSize={8} fontWeight="bold" fontFamily="monospace">BATTERY</text>
+            <text x={BATT_X + 54} y={ROW2_Y + 50} textAnchor="middle" fill="#4ade80" fontSize={8} fontFamily="monospace">74% · 10 kWh</text>
+            {/* Charge % label on bar */}
+            <text x={BATT_X + 48} y={ROW2_Y + 39} textAnchor="middle" fill="#0f172a" fontSize={7} fontWeight="bold">74%</text>
+            <text x={BATT_X + 54} y={ROW2_Y + 66} textAnchor="middle" fill="white" fontSize={8.5} fontWeight="bold">Battery Storage</text>
+          </Card>
+
+          {/* Inverter ↔ Battery vertical arrow */}
+          <VArrow x={INV_CX} y1={ROW1_Y + CARD_H} y2={ROW2_Y} color="#3B82F6" label="CHARGE" bid />
+
+          {/* ══ GRID CARD ════════════════════════════════════════════════ */}
+          <Card x={GRID_X} y={ROW2_Y} w={CARD_W} h={ROW2_H} accent="#A78BFA">
+            {/* Power tower / pylon */}
+            <line x1={GRID_X + 54} y1={ROW2_Y + 8} x2={GRID_X + 54} y2={ROW2_Y + 55} stroke="#64748b" strokeWidth={2.5} />
+            <line x1={GRID_X + 34} y1={ROW2_Y + 18} x2={GRID_X + 74} y2={ROW2_Y + 18} stroke="#64748b" strokeWidth={2} />
+            <line x1={GRID_X + 38} y1={ROW2_Y + 30} x2={GRID_X + 70} y2={ROW2_Y + 30} stroke="#64748b" strokeWidth={1.5} />
+            {/* Insulators */}
+            <circle cx={GRID_X + 34} cy={ROW2_Y + 18} r={3} fill="#475569" />
+            <circle cx={GRID_X + 74} cy={ROW2_Y + 18} r={3} fill="#475569" />
+            <circle cx={GRID_X + 38} cy={ROW2_Y + 30} r={2.5} fill="#475569" />
+            <circle cx={GRID_X + 70} cy={ROW2_Y + 30} r={2.5} fill="#475569" />
+            {/* Power lines (curved) */}
+            <path d={`M ${GRID_X + 34} ${ROW2_Y + 18} Q ${GRID_X + 20} ${ROW2_Y + 26} ${GRID_X + 14} ${ROW2_Y + 30}`} stroke="#A78BFA" strokeWidth={1.5} fill="none" opacity={0.8} />
+            <path d={`M ${GRID_X + 74} ${ROW2_Y + 18} Q ${GRID_X + 88} ${ROW2_Y + 26} ${GRID_X + 94} ${ROW2_Y + 30}`} stroke="#A78BFA" strokeWidth={1.5} fill="none" opacity={0.8} />
+            {/* Bidirectional ↕ symbol */}
+            <text x={GRID_X + 54} y={ROW2_Y + 52} textAnchor="middle" fill="#A78BFA" fontSize={12} fontWeight="bold">⇅</text>
+            <text x={GRID_X + 54} y={ROW2_Y + 66} textAnchor="middle" fill="white" fontSize={8.5} fontWeight="bold">Power Grid</text>
+          </Card>
+
+          {/* Home ↔ Grid vertical arrow */}
+          <VArrow x={HOME_GRID_X} y1={ROW1_Y + CARD_H} y2={ROW2_Y} color="#A78BFA" label="EXPORT" bid />
+
+          {/* ══ BOTTOM LABEL ══════════════════════════════════════════════ */}
+          <text x={370} y={278} textAnchor="middle" fill="#334155" fontSize={7.5} fontFamily="monospace">
+            HELIOHARVEST · RESIDENTIAL SOLAR SYSTEM · 3kW INSTALLATION
+          </text>
+        </svg>
+      </div>
     </div>
   );
 }
