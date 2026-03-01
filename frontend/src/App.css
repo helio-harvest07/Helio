@@ -10,7 +10,7 @@
 }
 
 @keyframes flowDashAnim {
-  to { stroke-dashoffset: -36; }
+  to { stroke-dashoffset: -20; }
 }
 
 @keyframes fadeUpAnim {
