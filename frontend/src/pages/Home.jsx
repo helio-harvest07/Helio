@@ -193,9 +193,24 @@ export default function Home() {
                 <Zap className="w-6 h-6 text-[#FACC15]" />
               </div>
               <h3 className="text-2xl md:text-3xl font-bold mb-4 text-[#FACC15]" style={{ fontFamily: "Outfit, sans-serif" }}>Our Mission</h3>
-              <p className="text-slate-300 text-lg leading-relaxed">
-                Transforming raw energy data into automated action — delivering professional solar installations that empower Indian homes and businesses to generate clean, affordable electricity.
+              <p className="text-slate-300 text-lg leading-relaxed mb-5">
+                Transforming raw energy data into automated action — powering India's renewable revolution through our integrated platform.
               </p>
+              <div className="space-y-2">
+                {[
+                  { label: "HelioHarvest SaaS", desc: "Real-time monitoring, automated alerts & digital vault" },
+                  { label: "Solar Co-Pilot", desc: "AI-powered VR design, satellite analysis & smart procurement" },
+                  { label: "Energy Exchange", desc: "P2P trading, Virtual Power Plants & carbon credit monetization" },
+                ].map(({ label, desc }) => (
+                  <div key={label} className="flex items-start gap-3 bg-white/5 rounded-lg px-4 py-2.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#FACC15] mt-2 flex-shrink-0" />
+                    <div>
+                      <span className="text-[#FACC15] font-semibold text-sm">{label}</span>
+                      <span className="text-slate-400 text-sm"> — {desc}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
 
             {/* Vision */}
