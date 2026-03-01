@@ -29,7 +29,7 @@ Build a SaaS marketing website for HelioHarvest, a solar installation company. T
 ### Components
 - **Navbar** — Transparent-to-solid scroll effect, mobile hamburger menu, phone number, CTA button
 - **Footer** — Dark navy, links, contact info, social icons
-- **SolarFlowAnimation** — Full realistic SVG diagram: Glowing rotating sun → Photon beams → 3 Solar Panels (Panel A/B/C with cell grid) → DC BUS Combiner → Inverter (with DC→AC conversion display) → Battery Pack (lithium-ion, charge level) + Smart Meter (live kWh) → Home Loads (TV, Air Conditioner, Lighting, Refrigerator) — all with animated flowing particles and dashed energy cables
+- **SolarFlowDiagram** — Professional static infographic-style diagram (dark navy + solar theme): Glowing Sun → Solar Panels (PV array, 2 panels with cell grid, mounting rail) → Inverter (gray box with LED cluster, ventilation slots, waveform, DC/AC indicators) → Home Loads (house + 4 appliance icons: TV with screen, AC unit with fan, light bulb with rays, refrigerator with dual temp zones). Battery Storage (charge level bar 74%, 10kWh) and Power Grid (pylon with curved power lines, bidirectional ⇅) as branches. Color-coded arrows: orange for DC, green for AC, blue for battery charge, purple for grid export. Legend in header bar. Step numbers 1-2-3 on main cards.
 
 ### Backend
 - FastAPI with `/api/leads` POST and GET endpoints
