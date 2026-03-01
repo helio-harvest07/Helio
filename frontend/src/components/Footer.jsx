@@ -87,7 +87,7 @@ export default function Footer() {
             </a>
             <div className="flex items-start gap-3 text-slate-400 text-sm">
               <MapPin className="w-4 h-4 text-[#F59E0B] flex-shrink-0 mt-0.5" />
-              <span>India — Serving Tamil Nadu, Gujarat & Rajasthan</span>
+              <span>91/1, MTP Road, Coimbatore, 641030, India</span>
             </div>
           </div>
         </div>

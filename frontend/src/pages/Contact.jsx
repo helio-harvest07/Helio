@@ -21,10 +21,10 @@ const contactInfo = [
   },
   {
     icon: MapPin,
-    label: "Regions Served",
-    value: "Tamil Nadu, Gujarat, Rajasthan",
-    href: null,
-    sub: "Pan-India expansion underway",
+    label: "Office Address",
+    value: "91/1, MTP Road, Coimbatore, 641030",
+    href: "https://maps.google.com/?q=91/1,MTP+Road,Coimbatore,641030,India",
+    sub: "India — Pan-India services available",
   },
   {
     icon: Clock,
