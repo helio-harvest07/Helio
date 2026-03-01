@@ -18,10 +18,10 @@ Build a SaaS marketing website for HelioHarvest, a solar installation company. T
 ### Database
 - MongoDB collection: `leads` (name, email, phone, address, message, created_at)
 
-## What's Been Implemented (as of Feb 2026)
+## What's Been Implemented (as of Feb/Mar 2026)
 
 ### Pages
-- **Home** — Hero with SVG solar energy flow animation, stats bar, Mission & Vision cards, Services preview, Why HelioHarvest features, Testimonials, CTA banner
+- **Home** — Hero with realistic SVG solar energy flow animation, stats bar, Mission & Vision (with all 3 product names), Services preview, HelioHarvest Product Ecosystem (3 platform cards), Why HelioHarvest features, Testimonials, India Coverage section (30 state/city badges + pan-India stats), CTA banner
 - **About** — Company story, milestones timeline, detailed Mission & Vision, Core Values
 - **Services** — 3 service cards (Installation, Monitoring, AMC), How It Works 4-step process, Benefits stats, Monitoring feature section
 - **Contact** — Lead form (name/email/phone/address/message), Contact info, What Happens Next guide
@@ -29,12 +29,17 @@ Build a SaaS marketing website for HelioHarvest, a solar installation company. T
 ### Components
 - **Navbar** — Transparent-to-solid scroll effect, mobile hamburger menu, phone number, CTA button
 - **Footer** — Dark navy, links, contact info, social icons
-- **SolarFlowAnimation** — SVG animation with glowing sun, rotating rays, solar panels, house, energy meter, animated flowing particles (animateMotion), dashed energy flow lines
+- **SolarFlowAnimation** — Full realistic SVG diagram: Glowing rotating sun → Photon beams → 3 Solar Panels (Panel A/B/C with cell grid) → DC BUS Combiner → Inverter (with DC→AC conversion display) → Battery Pack (lithium-ion, charge level) + Smart Meter (live kWh) → Home Loads (TV, Air Conditioner, Lighting, Refrigerator) — all with animated flowing particles and dashed energy cables
 
 ### Backend
 - FastAPI with `/api/leads` POST and GET endpoints
 - MongoDB storage via Motor (async)
 - CORS configured
+
+### Products Mentioned
+- **HelioHarvest SaaS** — Real-time monitoring, Proactive alerts, Digital Vault, Carbon compliance
+- **Solar Co-Pilot** — VR Digital Twin, AI satellite design, Smart procurement
+- **Energy Exchange** — P2P Marketplace, VPP orchestration, Carbon credits
 
 ## User Personas
 - Homeowners in India (Tamil Nadu, Gujarat, Rajasthan) looking for solar installation
