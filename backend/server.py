@@ -9,6 +9,8 @@ from pydantic import BaseModel, Field, EmailStr
 from typing import Optional, List
 from datetime import datetime, timezone
 import uuid
+import httpx
+import urllib.parse
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -17,8 +19,15 @@ mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
 
+# CallMeBot WhatsApp Configuration
+CALLMEBOT_PHONE = os.environ.get('CALLMEBOT_PHONE', '')
+CALLMEBOT_APIKEY = os.environ.get('CALLMEBOT_APIKEY', '')
+
 app = FastAPI()
 api_router = APIRouter(prefix="/api")
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 class LeadCreate(BaseModel):
