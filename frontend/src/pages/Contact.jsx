@@ -214,9 +214,6 @@ Sent via HelioHarvest Lead Form`;
                   </p>
                 </div>
               )}
-                  </div>
-                </div>
-              )}
 
               {/* Error */}
               {status === "error" && (
