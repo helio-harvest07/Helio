@@ -90,6 +90,10 @@ async def create_lead(lead: LeadCreate):
     lead_obj = Lead(**lead.model_dump())
     doc = lead_obj.model_dump()
     await db.leads.insert_one(doc)
+    
+    # Send WhatsApp notification (non-blocking)
+    await send_whatsapp_notification(lead)
+    
     return {"success": True, "message": "Thank you! We'll contact you within 24 hours."}
 
 
