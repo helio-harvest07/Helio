@@ -1,7 +1,58 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Sun, Zap, ShieldCheck, Users, TrendingUp, Leaf, Star, ArrowRight } from "lucide-react";
+import { Sun, Zap, ShieldCheck, Users, TrendingUp, Leaf, Star, ArrowRight, LayoutDashboard, Cpu, BarChart2, Globe, Battery, Repeat } from "lucide-react";
 import SolarFlowAnimation from "@/components/SolarFlowAnimation";
+
+const indianStates = [
+  "Delhi NCR", "Mumbai", "Bengaluru", "Chennai", "Hyderabad",
+  "Ahmedabad", "Jaipur", "Kolkata", "Pune", "Surat",
+  "Tamil Nadu", "Gujarat", "Rajasthan", "Karnataka", "Maharashtra",
+  "Telangana", "Andhra Pradesh", "Kerala", "Madhya Pradesh", "Uttar Pradesh",
+  "Punjab", "Haryana", "West Bengal", "Odisha", "Bihar",
+  "Chhattisgarh", "Goa", "Himachal Pradesh", "Uttarakhand", "Assam",
+];
+
+const products = [
+  {
+    icon: LayoutDashboard,
+    tag: "Core Platform",
+    title: "HelioHarvest SaaS",
+    color: "from-blue-900 to-slate-900",
+    border: "border-blue-500",
+    features: [
+      { icon: Zap, text: "Real-time power generation monitoring & CO₂ savings" },
+      { icon: ShieldCheck, text: "Proactive failure alerts & instant technician dispatch" },
+      { icon: Battery, text: "Digital Vault — invoices, warranties, service history" },
+      { icon: Leaf, text: "Automated MRV reporting & carbon credit documentation" },
+    ],
+  },
+  {
+    icon: Cpu,
+    tag: "Design & Procurement",
+    title: "Solar Co-Pilot",
+    color: "from-orange-950 to-slate-900",
+    border: "border-orange-500",
+    features: [
+      { icon: Globe, text: "VR Digital Twin — immersive virtual roof walk-throughs" },
+      { icon: Sun, text: "AI satellite shading analysis & optimal tilt calculations" },
+      { icon: BarChart2, text: "Automated bill of materials & smart procurement" },
+      { icon: TrendingUp, text: "Reduces soft costs & shortens sales cycles" },
+    ],
+  },
+  {
+    icon: Repeat,
+    tag: "Fintech & Trading",
+    title: "Energy Exchange",
+    color: "from-green-950 to-slate-900",
+    border: "border-green-500",
+    features: [
+      { icon: Users, text: "P2P Marketplace — AI-powered energy brokerage" },
+      { icon: Zap, text: "Virtual Power Plant (VPP) orchestration across India" },
+      { icon: Leaf, text: "Carbon credit monetization — 15% success fee" },
+      { icon: BarChart2, text: "₹0.50–₹1.00 per kWh traded on P2P exchange" },
+    ],
+  },
+];
 
 const stats = [
   { value: "500+", label: "Installations" },
