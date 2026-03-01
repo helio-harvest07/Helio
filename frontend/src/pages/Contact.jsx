@@ -193,11 +193,27 @@ Sent via HelioHarvest Lead Form`;
 
               {/* Success */}
               {status === "success" && (
-                <div data-testid="form-success" className="mb-6 flex items-start gap-3 p-4 bg-green-50 border border-green-200 rounded-xl">
-                  <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-green-800 font-semibold">Thank you! We'll contact you within 24 hours.</p>
-                    <p className="text-green-600 text-sm">Meanwhile, feel free to call us at +91 90923 79023.</p>
+                <div data-testid="form-success" className="mb-6 p-5 bg-green-50 border border-green-200 rounded-xl">
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-green-800 font-semibold">Thank you! Your inquiry has been submitted.</p>
+                      <p className="text-green-600 text-sm mt-1">Click below to send your details directly to our WhatsApp for faster response!</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={handleWhatsAppClick}
+                    data-testid="whatsapp-send-btn"
+                    className="mt-4 w-full flex items-center justify-center gap-2 py-3 px-6 bg-[#25D366] hover:bg-[#20BD5A] text-white font-semibold rounded-full transition-all hover:-translate-y-0.5 hover:shadow-lg"
+                  >
+                    <MessageCircle className="w-5 h-5" />
+                    Send to WhatsApp
+                  </button>
+                  <p className="text-center text-slate-400 text-xs mt-3">
+                    Or call us directly at +91 90923 79023
+                  </p>
+                </div>
+              )}
                   </div>
                 </div>
               )}
