@@ -272,6 +272,49 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── PRODUCTS PLATFORM ── */}
+      <section className="bg-[#0F172A] py-20 md:py-28">
+        <div className="max-w-7xl mx-auto px-6 md:px-12">
+          <div className="text-center mb-14">
+            <p className="text-[#F59E0B] text-sm font-semibold uppercase tracking-widest mb-3">Our Platform</p>
+            <h2 className="text-4xl md:text-5xl font-bold text-white" style={{ fontFamily: "Outfit, sans-serif" }}>
+              The Complete HelioHarvest Ecosystem
+            </h2>
+            <p className="text-slate-400 text-lg mt-4 max-w-2xl mx-auto">
+              Beyond installation — an integrated platform managing every phase of your solar journey, from design to carbon credits.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {products.map(({ icon: Icon, tag, title, color, border, features }) => (
+              <div
+                key={title}
+                data-testid={`product-card-${title.toLowerCase().replace(/ /g, "-")}`}
+                className={`rounded-2xl bg-gradient-to-b ${color} border ${border}/40 p-8 hover:border-opacity-80 transition-all duration-300 hover:-translate-y-1`}
+              >
+                <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full border ${border}/40 bg-white/5 text-xs font-medium text-slate-400 mb-5`}>
+                  {tag}
+                </div>
+                <div className="flex items-center gap-3 mb-6">
+                  <div className={`w-11 h-11 rounded-xl border ${border}/40 bg-white/5 flex items-center justify-center`}>
+                    <Icon className="w-5 h-5 text-[#FACC15]" />
+                  </div>
+                  <h3 className="text-xl font-bold text-white" style={{ fontFamily: "Outfit, sans-serif" }}>{title}</h3>
+                </div>
+                <div className="space-y-3">
+                  {features.map(({ icon: FIcon, text }) => (
+                    <div key={text} className="flex items-start gap-3">
+                      <FIcon className="w-4 h-4 text-[#F59E0B] flex-shrink-0 mt-0.5" />
+                      <span className="text-slate-400 text-sm leading-snug">{text}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ── WHY HELIOHARVEST ── */}      <section className="bg-[#F8FAFC] py-20 md:py-28">
         <div className="max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <div>
