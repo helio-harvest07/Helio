@@ -1,0 +1,185 @@
+{
+  "design_system": {
+    "identity": {
+      "name": "HelioHarvest",
+      "tagline": "The Global Operating System for Energy",
+      "tone": "Professional, Innovative, Trustworthy, Energetic",
+      "theme_mode": "light",
+      "archetype": "Clean Tech Solar"
+    },
+    "typography": {
+      "font_family": {
+        "headings": "Outfit, sans-serif",
+        "body": "Inter, sans-serif",
+        "mono": "JetBrains Mono, monospace"
+      },
+      "scale": {
+        "h1": "text-5xl md:text-7xl font-bold tracking-tight leading-none",
+        "h2": "text-4xl md:text-5xl font-bold tracking-tight",
+        "h3": "text-2xl md:text-3xl font-semibold",
+        "body_lg": "text-lg md:text-xl leading-relaxed text-slate-600",
+        "body": "text-base leading-relaxed text-slate-600",
+        "caption": "text-sm text-slate-500 uppercase tracking-widest"
+      },
+      "imports": [
+        "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@400;500;700;800&display=swap"
+      ]
+    },
+    "colors": {
+      "palette": {
+        "primary": {
+          "DEFAULT": "#F59E0B",
+          "foreground": "#FFFFFF",
+          "50": "#FFFBEB",
+          "100": "#FEF3C7",
+          "500": "#F59E0B",
+          "600": "#D97706",
+          "900": "#78350F"
+        },
+        "secondary": {
+          "DEFAULT": "#1E3A8A",
+          "foreground": "#FFFFFF",
+          "50": "#EFF6FF",
+          "100": "#DBEAFE",
+          "500": "#3B82F6",
+          "900": "#1E3A8A"
+        },
+        "accent": {
+          "DEFAULT": "#FACC15",
+          "foreground": "#1E293B"
+        },
+        "background": {
+          "DEFAULT": "#FFFFFF",
+          "alt": "#F8FAFC",
+          "dark": "#0F172A"
+        },
+        "text": {
+          "primary": "#0F172A",
+          "secondary": "#475569",
+          "muted": "#94A3B8"
+        },
+        "border": {
+          "DEFAULT": "#E2E8F0",
+          "focus": "#F59E0B"
+        }
+      },
+      "usage": {
+        "primary_button": "bg-[#F59E0B] hover:bg-[#D97706] text-white",
+        "secondary_button": "bg-white border-2 border-[#1E3A8A] text-[#1E3A8A] hover:bg-[#EFF6FF]",
+        "hero_bg": "bg-[#0F172A]",
+        "card_bg": "bg-white border border-slate-100 shadow-xl shadow-slate-200/50"
+      }
+    },
+    "layout": {
+      "spacing": {
+        "section_padding": "py-20 md:py-32",
+        "container_padding": "px-6 md:px-12",
+        "element_gap": "gap-6 md:gap-12"
+      },
+      "grid": {
+        "bento_marketing": "grid grid-cols-1 md:grid-cols-3 gap-8",
+        "features": "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+      },
+      "container": "max-w-7xl mx-auto"
+    },
+    "components": {
+      "buttons": {
+        "base": "inline-flex items-center justify-center rounded-full px-8 py-4 text-sm font-semibold transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+        "variants": {
+          "primary": "bg-[#F59E0B] text-white hover:bg-[#D97706] hover:-translate-y-1 hover:shadow-lg hover:shadow-orange-500/30",
+          "secondary": "bg-transparent border-2 border-[#1E3A8A] text-[#1E3A8A] hover:bg-[#1E3A8A] hover:text-white"
+        }
+      },
+      "cards": {
+        "feature": "group relative overflow-hidden rounded-2xl bg-white p-8 shadow-lg transition-all hover:-translate-y-1 hover:shadow-xl border-t-4 border-[#F59E0B]",
+        "testimonial": "rounded-2xl bg-slate-50 p-8 border border-slate-100"
+      },
+      "inputs": {
+        "base": "flex h-12 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#F59E0B] focus:border-transparent transition-all"
+      }
+    },
+    "motion": {
+      "animations": {
+        "fade_up": {
+          "initial": { "opacity": 0, "y": 20 },
+          "whileInView": { "opacity": 1, "y": 0 },
+          "viewport": { "once": true },
+          "transition": { "duration": 0.5, "ease": "easeOut" }
+        },
+        "stagger_children": {
+          "visible": { "transition": { "staggerChildren": 0.1 } }
+        },
+        "solar_flow": "Use SVG path animation with framer-motion pathLength to simulate energy flowing through cables."
+      }
+    }
+  },
+  "assets": {
+    "images": {
+      "hero_bg": {
+        "url": "https://images.unsplash.com/photo-1723046106153-8d3810267931?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA4Mzl8MHwxfHNlYXJjaHw0fHxzb2xhciUyMHBhbmVscyUyMG9uJTIwbW9kZXJuJTIwaG91c2UlMjBibHVlJTIwc2t5fGVufDB8fHx8MTc3MjM0NDYyNHww&ixlib=rb-4.1.0&q=85",
+        "alt": "Modern home with solar panels under blue sky"
+      },
+      "installation_process": {
+        "url": "https://images.unsplash.com/photo-1542336391-ae2936d8efe4?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NTYxOTB8MHwxfHNlYXJjaHwyfHxzb2xhciUyMHBhbmVsJTIwaW5zdGFsbGF0aW9uJTIwd29ya2VycyUyMHByb2Zlc3Npb25hbHxlbnwwfHx8fDE3NzIzNDQ2MjZ8MA&ixlib=rb-4.1.0&q=85",
+        "alt": "Professional solar technician installing panels"
+      },
+      "dashboard_preview": {
+        "url": "https://images.unsplash.com/photo-1662601311150-c20f76b7cb20?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA2OTV8MHwxfHNlYXJjaHwxfHxzb2xhciUyMGVuZXJneSUyMGRhdGElMjBkYXNoYm9hcmQlMjB0YWJsZXR8ZW58MHx8fHwxNzcyMzQ0NjI3fDA&ixlib=rb-4.1.0&q=85",
+        "alt": "Energy monitoring dashboard on tablet"
+      },
+      "customer_support": {
+        "url": "https://images.unsplash.com/photo-1713946598521-3a196fed3643?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1NzZ8MHwxfHNlYXJjaHwyfHxjdXN0b21lciUyMHN1cHBvcnQlMjBoYXBweSUyMGFnZW50JTIwaGVhZHNldHxlbnwwfHx8fDE3NzIzNDQ2Mjh8MA&ixlib=rb-4.1.0&q=85",
+        "alt": "Friendly customer support agent"
+      },
+      "team_collaboration": {
+        "url": "https://images.pexels.com/photos/5256688/pexels-photo-5256688.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "alt": "Diverse team collaborating on energy projects"
+      }
+    },
+    "icons": {
+      "library": "lucide-react",
+      "preferred": ["Sun", "Zap", "Battery", "LayoutDashboard", "ShieldCheck", "Users", "Phone", "MapPin"]
+    }
+  },
+  "implementation_plan": {
+    "phases": [
+      {
+        "name": "Phase 1: Foundation",
+        "tasks": [
+          "Install 'lucide-react', 'framer-motion', 'clsx', 'tailwind-merge'",
+          "Setup Tailwind config with Solar Brand colors",
+          "Create base layout with Header (transparent to solid on scroll) and Footer (Dark Blue)"
+        ]
+      },
+      {
+        "name": "Phase 2: Components",
+        "tasks": [
+          "Create 'SolarFlowAnimation' component using SVG lines",
+          "Build 'ServiceCard', 'TestimonialCard', 'LeadForm'",
+          "Implement 'Button' variants"
+        ]
+      },
+      {
+        "name": "Phase 3: Pages",
+        "tasks": [
+          "Home: Hero with Flow Animation, Stats, Mission, Services Preview",
+          "About: Story, Team Grid, Values",
+          "Services: Detailed process steps with icons",
+          "Contact: Split layout (Info Left, Form Right)"
+        ]
+      }
+    ]
+  },
+  "universal_guidelines": {
+    "do_not": [
+      "Use gradients for text unless it's a very subtle gold shimmer",
+      "Use default shadcn cards without customization",
+      "Center text on mobile for long paragraphs"
+    ],
+    "must": [
+      "Use 24px-32px padding inside cards",
+      "Ensure all buttons have hover states",
+      "Add 'data-testid' to all interactive elements"
+    ]
+  }
+}
