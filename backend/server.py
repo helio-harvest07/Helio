@@ -43,6 +43,43 @@ class Lead(LeadCreate):
     created_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
 
 
+async def send_whatsapp_notification(lead: LeadCreate):
+    """Send WhatsApp notification via CallMeBot API"""
+    if not CALLMEBOT_PHONE or not CALLMEBOT_APIKEY:
+        logger.warning("CallMeBot not configured - skipping WhatsApp notification")
+        return False
+    
+    try:
+        message = f"""🌞 *New Solar Lead - HelioHarvest*
+
+👤 *Name:* {lead.name}
+📧 *Email:* {lead.email}
+📱 *Phone:* {lead.phone}
+📍 *Address:* {lead.address or 'Not provided'}
+
+💬 *Message:*
+{lead.message or 'No message'}
+
+⏰ Received: {datetime.now().strftime('%d %b %Y, %I:%M %p')}"""
+
+        encoded_message = urllib.parse.quote(message)
+        url = f"https://api.callmebot.com/whatsapp.php?phone={CALLMEBOT_PHONE}&text={encoded_message}&apikey={CALLMEBOT_APIKEY}"
+        
+        async with httpx.AsyncClient(timeout=30.0) as http_client:
+            response = await http_client.get(url)
+            
+            if response.status_code == 200:
+                logger.info(f"WhatsApp notification sent for lead: {lead.name}")
+                return True
+            else:
+                logger.error(f"CallMeBot API error: {response.status_code} - {response.text}")
+                return False
+                
+    except Exception as e:
+        logger.error(f"Failed to send WhatsApp notification: {str(e)}")
+        return False
+
+
 @api_router.get("/")
 async def root():
     return {"message": "HelioHarvest API running"}
