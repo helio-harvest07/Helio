@@ -58,3 +58,12 @@ html {
     display: contents !important;
   }
 }
+
+/* Hide Emergent badge */
+#emergent-badge,
+a[href*="emergent.sh"],
+[id^="emergent"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
