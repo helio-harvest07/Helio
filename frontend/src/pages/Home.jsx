@@ -2,7 +2,6 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Sun, Zap, ShieldCheck, Users, TrendingUp, Leaf, Star, ArrowRight, LayoutDashboard, Cpu, BarChart2, Globe, Battery, Repeat } from "lucide-react";
 import SolarFlowAnimation from "@/components/SolarFlowAnimation";
-import SEO from "@/components/SEO";
 
 const indianStates = [
   "Delhi NCR", "Mumbai", "Bengaluru", "Chennai", "Hyderabad",
