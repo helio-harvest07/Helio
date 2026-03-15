@@ -1,7 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Sun, Zap, Leaf, Users, Target, Globe, ArrowRight } from "lucide-react";
-import SEO from "@/components/SEO";
 
 const values = [
   { icon: Zap, title: "Innovation", desc: "We leverage cutting-edge technology — from satellite shading analysis to AI-powered design — to deliver the best solar systems." },
