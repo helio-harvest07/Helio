@@ -20,12 +20,6 @@ const milestones = [
 export default function About() {
   return (
     <div>
-      <SEO 
-        title="About HelioHarvest | Our Mission & Story | Solar Energy Company India"
-        description="Learn about HelioHarvest's mission to power India's renewable revolution. 500+ installations, MNRE certified, serving Tamil Nadu, Gujarat, Rajasthan and beyond."
-        keywords="about HelioHarvest, solar company India, renewable energy company, solar installation company Coimbatore"
-        url="https://helioharvest.in/about"
-      />
       {/* ── PAGE HERO ── */}
       <section className="bg-[#0F172A] pt-32 pb-20">
         <div className="max-w-7xl mx-auto px-6 md:px-12 text-center">
