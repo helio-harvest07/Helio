@@ -10,42 +10,41 @@ const defaultSEO = {
 };
 
 export default function SEO({ 
-  title, 
-  description, 
-  keywords, 
-  image, 
-  url,
+  title = defaultSEO.title, 
+  description = defaultSEO.description, 
+  keywords = defaultSEO.keywords, 
+  image = defaultSEO.image, 
+  url = defaultSEO.url,
   type = 'website'
 }) {
-  const seo = {
-    title: title || defaultSEO.title,
-    description: description || defaultSEO.description,
-    keywords: keywords || defaultSEO.keywords,
-    image: image || defaultSEO.image,
-    url: url || defaultSEO.url,
-  };
+  // Ensure all values are strings
+  const seoTitle = String(title || defaultSEO.title);
+  const seoDescription = String(description || defaultSEO.description);
+  const seoKeywords = String(keywords || defaultSEO.keywords);
+  const seoImage = String(image || defaultSEO.image);
+  const seoUrl = String(url || defaultSEO.url);
 
   return (
     <Helmet>
-      <title>{seo.title}</title>
-      <meta name="description" content={seo.description} />
-      <meta name="keywords" content={seo.keywords} />
+      <title>{seoTitle}</title>
+      <meta name="description" content={seoDescription} />
+      <meta name="keywords" content={seoKeywords} />
       
       {/* Open Graph */}
       <meta property="og:type" content={type} />
-      <meta property="og:title" content={seo.title} />
-      <meta property="og:description" content={seo.description} />
-      <meta property="og:image" content={seo.image} />
-      <meta property="og:url" content={seo.url} />
+      <meta property="og:title" content={seoTitle} />
+      <meta property="og:description" content={seoDescription} />
+      <meta property="og:image" content={seoImage} />
+      <meta property="og:url" content={seoUrl} />
       
       {/* Twitter */}
       <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:title" content={seo.title} />
-      <meta name="twitter:description" content={seo.description} />
-      <meta name="twitter:image" content={seo.image} />
+      <meta name="twitter:title" content={seoTitle} />
+      <meta name="twitter:description" content={seoDescription} />
+      <meta name="twitter:image" content={seoImage} />
       
       {/* Canonical */}
-      <link rel="canonical" href={seo.url} />
+      <link rel="canonical" href={seoUrl} />
     </Helmet>
   );
 }
