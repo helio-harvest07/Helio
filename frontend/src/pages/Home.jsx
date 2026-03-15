@@ -95,12 +95,6 @@ const testimonials = [
 export default function Home() {
   return (
     <div>
-      <SEO 
-        title="HelioHarvest | #1 Solar Installation Services in India | Save 40% on Bills"
-        description="Professional solar panel installation for homes & businesses across India. MNRE certified, 25-year warranty. Save up to 40% on electricity bills. Free site survey!"
-        keywords="solar installation India, solar panels Coimbatore, rooftop solar, solar energy Tamil Nadu, residential solar, commercial solar"
-        url="https://helioharvest.in/"
-      />
       {/* ── HERO ── */}
       <section className="min-h-screen bg-[#0F172A] flex items-center relative overflow-hidden pt-16">
         {/* Background glow */}
