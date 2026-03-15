@@ -73,7 +73,6 @@ Build a SaaS marketing website for HelioHarvest, a solar installation company. T
 - [ ] Admin dashboard to view/manage leads
 - [ ] Email notification on new lead submission (Resend/SendGrid)
 - [ ] Google Analytics integration
-- [ ] SEO meta tags
 
 ### P2 (Future)
 - [ ] Blog/resources section
