@@ -62,6 +62,12 @@ const benefits = [
 export default function Services() {
   return (
     <div>
+      <SEO 
+        title="Solar Installation Services India | Rooftop Solar, AMC, Monitoring | HelioHarvest"
+        description="Professional solar services: Rooftop installation (2kW-500kW+), real-time monitoring, annual maintenance. MNRE subsidy assistance. Free site survey across India."
+        keywords="solar installation services, rooftop solar India, solar panel installation cost, solar AMC, solar monitoring system, net metering India"
+        url="https://helioharvest.in/services"
+      />
       {/* ── PAGE HERO ── */}
       <section className="bg-[#0F172A] pt-32 pb-20">
         <div className="max-w-7xl mx-auto px-6 md:px-12 text-center">
