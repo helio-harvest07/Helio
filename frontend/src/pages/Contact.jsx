@@ -92,6 +92,12 @@ Sent via HelioHarvest Lead Form`;
 
   return (
     <div>
+      <SEO 
+        title="Contact HelioHarvest | Get Free Solar Quote | Solar Installation Coimbatore"
+        description="Get a free solar quote and site survey. Contact HelioHarvest at +91 9092379023. Office: 91/1, MTP Road, Coimbatore 641030. Response within 24 hours."
+        keywords="solar quote India, contact solar company, free solar consultation, solar installation Coimbatore, solar panel price quote"
+        url="https://helioharvest.in/contact"
+      />
       {/* ── PAGE HERO ── */}
       <section className="bg-[#0F172A] pt-32 pb-20">
         <div className="max-w-7xl mx-auto px-6 md:px-12 text-center">
