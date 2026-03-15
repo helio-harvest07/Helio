@@ -1,7 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Sun, Zap, ShieldCheck, ClipboardList, Wrench, BarChart2, CheckCircle, ArrowRight, Phone } from "lucide-react";
-import SEO from "@/components/SEO";
 
 const services = [
   {
