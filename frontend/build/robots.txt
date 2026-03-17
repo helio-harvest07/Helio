@@ -1,0 +1,14 @@
+# Robots.txt for HelioHarvest
+# https://helioharvest.in
+
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://helioharvest.in/sitemap.xml
+
+# Crawl-delay (optional, for politeness)
+Crawl-delay: 1
+
+# Disallow admin or private areas (if any)
+Disallow: /api/
