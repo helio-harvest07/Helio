@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { Phone, Mail, MapPin, Clock, Sun, CheckCircle, AlertCircle, Loader, MessageCircle } from "lucide-react";
+import { Phone, Mail, Clock, Sun, CheckCircle, AlertCircle, Loader, MessageCircle } from "lucide-react";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
@@ -15,16 +15,9 @@ const contactInfo = [
   {
     icon: Mail,
     label: "Email",
-    value: "hello@helioharvest.in",
-    href: "mailto:hello@helioharvest.in",
+    value: "solar@helioharvest.co.in",
+    href: "mailto:solar@helioharvest.co.in",
     sub: "Reply within 24 hours",
-  },
-  {
-    icon: MapPin,
-    label: "Office Address",
-    value: "91/1, MTP Road, Coimbatore, 641030",
-    href: "https://maps.google.com/?q=91/1,MTP+Road,Coimbatore,641030,India",
-    sub: "India — Pan-India services available",
   },
   {
     icon: Clock,
