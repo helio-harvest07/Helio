@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Sun, Phone, Mail, MapPin, Facebook, Twitter, Linkedin, Instagram } from "lucide-react";
+import { Sun, Phone, Mail, Linkedin, Instagram } from "lucide-react";
 
 const footerLinks = {
   Company: [
@@ -15,6 +15,11 @@ const footerLinks = {
     { label: "Energy Monitoring", path: "/services" },
   ],
 };
+
+const socialLinks = [
+  { Icon: Instagram, href: "https://www.instagram.com/helio_harvest?utm_source=qr&igsh=MWxzenhkcHk0N2Rldw%3D%3D", label: "Instagram" },
+  { Icon: Linkedin, href: "https://www.linkedin.com/in/helio-harvest-4482443a3?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app", label: "LinkedIn" },
+];
 
 export default function Footer() {
   return (
@@ -35,10 +40,13 @@ export default function Footer() {
             Transforming raw energy data into automated action—powering the renewable revolution, one installation at a time.
           </p>
           <div className="flex gap-3">
-            {[Facebook, Twitter, Linkedin, Instagram].map((Icon, i) => (
+            {socialLinks.map(({ Icon, href, label }) => (
               <a
-                key={i}
-                href="#"
+                key={label}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={label}
                 className="w-8 h-8 rounded-full border border-slate-700 flex items-center justify-center hover:border-[#F59E0B] hover:text-[#F59E0B] transition-colors"
               >
                 <Icon className="w-4 h-4" />
@@ -79,16 +87,12 @@ export default function Footer() {
               +91 90923 79023
             </a>
             <a
-              href="mailto:hello@helioharvest.in"
+              href="mailto:solar@helioharvest.co.in"
               className="flex items-center gap-3 text-slate-400 hover:text-[#FACC15] text-sm transition-colors"
             >
               <Mail className="w-4 h-4 text-[#F59E0B] flex-shrink-0" />
-              hello@helioharvest.in
+              solar@helioharvest.co.in
             </a>
-            <div className="flex items-start gap-3 text-slate-400 text-sm">
-              <MapPin className="w-4 h-4 text-[#F59E0B] flex-shrink-0 mt-0.5" />
-              <span>91/1, MTP Road, Coimbatore, 641030, India</span>
-            </div>
           </div>
         </div>
       </div>
