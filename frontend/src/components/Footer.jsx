@@ -101,11 +101,17 @@ export default function Footer() {
       <div className="border-t border-slate-800 px-6 md:px-12 py-5">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-slate-500 text-sm">
-            &copy; {new Date().getFullYear()} HelioHarvest. All rights reserved.
+            &copy; {new Date().getFullYear()} HelioHarvest™. All rights reserved.
           </p>
-          <p className="text-slate-500 text-xs">
-            The Global Operating System for Energy
-          </p>
+          <div className="flex items-center gap-4">
+            <Link to="/privacy-policy" className="text-slate-500 hover:text-[#FACC15] text-xs transition-colors">
+              Privacy Policy
+            </Link>
+            <span className="text-slate-700">|</span>
+            <Link to="/trademark" className="text-slate-500 hover:text-[#FACC15] text-xs transition-colors">
+              Terms & Trademark
+            </Link>
+          </div>
         </div>
       </div>
     </footer>
